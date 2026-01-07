@@ -1,0 +1,21 @@
+-
+ name : Install Nginx  #name of playbook
+ hosts : Ankit_Servers
+ become : yes      # for works as root
+
+ tasks :
+   - name : Install Nginx  #task name
+     package :    # apt-get it is package
+       name : nginx     #package name
+       state : latest
+
+   - name : Start Nginx
+     systemd_service :
+       name : nginx
+       state : started
+
+   - name : Enable Nginx Service
+     systemd_service :
+       name : nginx
+       enabled : true
+

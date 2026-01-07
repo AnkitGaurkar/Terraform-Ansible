@@ -1,0 +1,9 @@
+#dev Environment
+
+[Ankit_Servers] #Group Name (Uncommon Var)
+Server1 ansible_host=108.129.211.47 ansible_user=ec2-user
+Server2 ansible_host=34.247.166.14 ansible_user=ec2-user
+
+[Ankit_Servers:vars] #Common Var
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_private_key_file=/home/ubuntu/keys/ansible-terra-key-ec2.pem

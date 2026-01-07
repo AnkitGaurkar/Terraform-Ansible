@@ -1,0 +1,68 @@
+- name: Install Docker    #Playbook name
+  hosts: Ankit_Servers    # host group name
+  become: yes             # for root user/sudo
+
+  tasks:
+
+    - name: Add Docker repo for RedHat
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+      when: ansible_distribution == "RedHat"
+
+    - name: Install Docker packages on RedHat
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      when: ansible_distribution == "RedHat"
+
+    - name: Install Docker on Amazon Linux
+      yum:
+        name: docker
+        state: latest
+      when: ansible_distribution == "Amazon"
+
+    - name: Start containerd
+      service:
+        name: containerd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "RedHat"
+
+    - name: Start Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ansible_user_id   #(if user same like ec2-user then put it name:ec2-user)
+        groups: docker
+        append: yes
+
+    - name: Add user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: Verify that the containers are running
+      command: docker ps
+
+
+    - name: Update and upgrade packages
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Reboot the server if needed
+      reboot:
+        msg: "Rebooting the server after applying updates"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
